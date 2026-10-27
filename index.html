@@ -304,7 +304,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 </section>
 
 <footer>
-  <div class="wrap mono">© <span id="year"></span> <span id="footName"></span> &middot; Built with HTML, CSS &amp; vanilla JS &middot; <a href="#" id="repo">Source on GitHub</a></div>
+  <div class="wrap mono">© <span id="year"></span> <span id="footName"></span> &middot; Built with HTML, CSS &amp; vanilla JS &middot; <a href="#" id="repo">Source on GitHub</a> &middot; Visits are counted anonymously</div>
 </footer>
 
 <div id="vbadge" title="Live visit count"><span class="dot"></span><span><b id="vtotal">0</b> visits</span></div>
@@ -329,6 +329,7 @@ const DATA = {
   email: "dhruvsadhwani29@gmail.com",
   phone: "+91 92091 83125",
   location: "India",
+  goatcounter: "", // ← paste your GoatCounter code (the "xyz" in xyz.goatcounter.com) to get the full visit log. See goatcounter-setup.md
   counterNamespace: "sadhwanidhruv-portfolio", // name for your visit counter (letters, digits, - _ . only, 3-64 chars)
 
   about: [
@@ -546,6 +547,20 @@ $("#theme").onclick = () => {
   root.dataset.theme = t;
   try { localStorage.setItem("theme", t); } catch (e) {}
 };
+
+/* ---------------- visit log (GoatCounter) ----------------
+   Records each visit in your GoatCounter dashboard: time, country, device, browser and where the
+   visitor came from. Add  ?ref=NAME  to a link you share (e.g. .../Portfolio/?ref=recruiter-priya)
+   and that visit is labelled NAME in the dashboard's "Referrers" list. No cookies, no personal data.
+   Open the site once with  #me  at the end of the URL to exclude your own browser. */
+(function log() {
+  if (location.hash === "#me") { try { localStorage.setItem("skipgc", "t"); localStorage.setItem("skipVisit", "1"); } catch (e) {} }
+  if (!DATA.goatcounter) return;
+  const s = document.createElement("script");
+  s.async = true; s.src = "https://gc.zgo.at/count.js";
+  s.dataset.goatcounter = "https://" + DATA.goatcounter + ".goatcounter.com/count";
+  document.head.appendChild(s);
+})();
 
 /* ---------------- visit counter (Abacus, free, no signup) ----------------
    Every new browser session adds 1 to a public counter and the total is shown in the badge and
