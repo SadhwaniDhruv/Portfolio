@@ -149,6 +149,12 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 #vbadge b{color:var(--accent)}
 @media(max-width:560px){#vbadge{left:10px;bottom:10px;font-size:.7rem}}
 
+/* say-hi box */
+.hello{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:22px}
+.hello p{flex:1 1 220px;color:var(--muted);font-size:.9rem}
+.hello form{display:flex;gap:8px;flex:1 1 280px}
+.hello input{flex:1}
+.hello .note{flex-basis:100%;font-size:.78rem;color:var(--muted)}
 /* reveal */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
 .reveal.in{opacity:1;transform:none}
@@ -290,6 +296,11 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 <section id="contact">
   <div class="wrap">
     <div class="sec-head reveal"><div class="route">POST <b>/contact</b></div><h2>Let's connect</h2></div>
+    <div class="hello reveal" id="hello">
+      <p><b style="color:var(--text)">Visiting?</b> Leave your name so I know who stopped by. Totally optional.</p>
+      <form id="helloForm"><input id="helloName" maxlength="40" placeholder="Your name" aria-label="Your name" required><button class="btn primary" type="submit">Say hi</button></form>
+      <span class="note mono" id="helloNote"></span>
+    </div>
     <div class="grid g2">
       <div class="contact-list reveal" id="contactList"></div>
       <form class="reveal" id="form">
@@ -560,6 +571,22 @@ $("#theme").onclick = () => {
   s.async = true; s.src = "https://gc.zgo.at/count.js";
   s.dataset.goatcounter = "https://" + DATA.goatcounter + ".goatcounter.com/count";
   document.head.appendChild(s);
+})();
+
+/* ---------------- "say hi" box: visitor leaves a name, it appears in your GoatCounter dashboard ---------------- */
+(function hello() {
+  const box = $("#hello"), note = $("#helloNote");
+  try { const n = localStorage.getItem("helloName"); if (n) { box.innerHTML = '<p>Thanks for stopping by, ' + esc(n) + '!</p>'; return; } } catch (e) {}
+  $("#helloForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = $("#helloName").value.trim().slice(0, 40);
+    if (!name) return;
+    const gc = window.goatcounter;
+    if (!DATA.goatcounter || !gc || !gc.count) { note.textContent = "Couldn't record that (a blocker may be on). You can email me instead."; return; }
+    gc.count({ path: "visitor/" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), title: name, event: true });
+    try { localStorage.setItem("helloName", name); } catch (err) {}
+    box.innerHTML = '<p>Thanks for stopping by, ' + esc(name) + '!</p>';
+  });
 })();
 
 /* ---------------- visit counter (Abacus, free, no signup) ----------------
